@@ -22,3 +22,17 @@ func TestHandler(t *testing.T) {
 		t.Errorf("Status code is %d", resp.StatusCode)
 	}
 }
+
+func TestMovieGetMostViewed(t *testing.T) {
+	app := gin.New()
+	server := httptest.NewServer(app)
+	defer server.Close()
+
+	resp, err := http.Get(config.BaseUrl() + "/admin/movies/most-viewed")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("Status code is %d", resp.StatusCode)
+	}
+}

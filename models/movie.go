@@ -1,6 +1,11 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"encoding/json"
+	"gorm.io/gorm"
+	"movie-festival-app/utils"
+	"reflect"
+)
 
 type Movie struct {
 	gorm.Model
@@ -12,4 +17,11 @@ type Movie struct {
 	Genre       string `gorm:"not null"`
 	Url         string `gorm:"not null;unique"`
 	Views       int    `gorm:"default:0"`
+}
+
+func (m Movie) MarshalJSON() ([]byte, error) {
+	type Alias Movie
+	alias := Alias(m)
+	value := reflect.ValueOf(alias)
+	return json.Marshal(utils.ConvertToJson(value))
 }
