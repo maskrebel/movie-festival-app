@@ -71,6 +71,15 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+func Status(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userId, _ := c.Get("user_id")
+		var user models.User
+		db.First(&user, userId)
+		c.JSON(http.StatusOK, gin.H{"message": "Welcome " + user.Username})
+	}
+}
+
 func Logout(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
