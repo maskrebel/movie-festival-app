@@ -13,9 +13,9 @@ type Movie struct {
 	Year        int    `gorm:"not null"`
 	Description string `gorm:"not null"`
 	Duration    int    `gorm:"not null"`
-	Artist      string `gorm:"not null"`
-	Genre       string `gorm:"not null"`
-	Url         string `gorm:"not null;unique"`
+	Artists     string `gorm:"not null"`
+	Genres      string `gorm:"not null"`
+	WatchURL    string `gorm:"not null;unique"`
 	Views       int    `gorm:"default:0"`
 }
 
