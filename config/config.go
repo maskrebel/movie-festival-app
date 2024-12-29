@@ -8,6 +8,10 @@ import (
 	"os"
 )
 
+func JWTSecretKey() string {
+	return getEnv("JWT_SECRET_KEY", "secret")
+}
+
 func BaseUrl() string {
 	baseUrl := getEnv("BASE_URL", "http://localhost:8080")
 	return baseUrl
