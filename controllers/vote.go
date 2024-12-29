@@ -10,15 +10,22 @@ import (
 func VoteMovie(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		movieID := c.Param("id")
-		UserID, _ := c.Get("user_id")
+		userID, _ := c.Get("user_id")
 
 		var movie models.Movie
 		if err := db.First(&movie, movieID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Movie not found!"})
+			return
+		}
+
+		var existingVote models.Vote
+		if err := db.Where("user_id = ? AND movie_id = ?", userID, movieID).First(&existingVote).Error; err == nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "You have already voted for this movie"})
+			return
 		}
 
 		input := models.Vote{
-			UserID:  UserID.(uint),
+			UserID:  userID.(uint),
 			MovieID: movie.ID,
 		}
 
@@ -28,5 +35,26 @@ func VoteMovie(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusCreated, gin.H{"message": "Vote successfully!"})
+	}
+}
+
+func UnVoteMovie(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		movieID := c.Param("id")
+		UserID, _ := c.Get("user_id")
+
+		var movie models.Movie
+		if err := db.First(&movie, movieID).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Movie not found!"})
+			return
+		}
+
+		var vote models.Vote
+		if err := db.Where("user_id = ? and movie_id = ?", UserID.(uint), movie.ID).Delete(&vote).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Movie with this user_id not found!", "d": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "UnVote successfully!"})
 	}
 }

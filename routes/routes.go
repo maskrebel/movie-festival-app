@@ -28,5 +28,6 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	movies := router.Group("/movies")
 	{
 		movies.POST("/:id/vote", middlewares.AuthMiddleware(), controllers.VoteMovie(db))
+		movies.DELETE("/:id/unvote", middlewares.AuthMiddleware(), controllers.UnVoteMovie(db))
 	}
 }
