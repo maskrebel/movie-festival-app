@@ -11,15 +11,15 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	// admin routes
 	admin := router.Group("/admin/movies")
 	{
-		admin.POST("/", controllers.CreateMovie(db))
-		admin.GET("/most-viewed", controllers.GetMostViewed(db))
-		admin.GET("/genre-most-viewed", controllers.GetGenreMostViewed(db))
+		admin.POST("/", middlewares.AuthMiddleware(db), controllers.CreateMovie(db))
+		admin.GET("/most-viewed", middlewares.AuthMiddleware(db), controllers.GetMostViewed(db))
+		admin.GET("/genre-most-viewed", middlewares.AuthMiddleware(db), controllers.GetGenreMostViewed(db))
 	}
 
 	// auth routes
 	auth := router.Group("/auth")
 	{
-		auth.GET("/status", middlewares.AuthMiddleware(), controllers.Status(db))
+		auth.GET("/status", middlewares.AuthMiddleware(db), controllers.Status(db))
 		auth.POST("/register", controllers.Register(db))
 		auth.POST("/login", controllers.Login(db))
 		auth.POST("/logout", controllers.Logout(db))
@@ -28,8 +28,8 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	// movies route
 	movies := router.Group("/movies")
 	{
-		movies.POST("/:id/vote", middlewares.AuthMiddleware(), controllers.VoteMovie(db))
-		movies.DELETE("/:id/unvote", middlewares.AuthMiddleware(), controllers.UnVoteMovie(db))
-		movies.POST("/:id/view", middlewares.AuthMiddleware(), controllers.ViewMovie(db))
+		movies.POST("/:id/vote", middlewares.AuthMiddleware(db), controllers.VoteMovie(db))
+		movies.DELETE("/:id/unvote", middlewares.AuthMiddleware(db), controllers.UnVoteMovie(db))
+		movies.POST("/:id/view", middlewares.AuthMiddleware(db), controllers.ViewMovie(db))
 	}
 }
