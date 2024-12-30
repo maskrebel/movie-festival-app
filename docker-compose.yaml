@@ -1,0 +1,22 @@
+version: '2.1'
+services:
+  go:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+    command: go run /code/main.go run
+
+  db:
+    image: mdillon/postgis:9.6
+    environment:
+      - POSTGRES_USER=movie
+      - POSTGRES_PASSWORD=movie
+      - POSTGRES_DB=movie
+    ports:
+      - "5454:5432"
