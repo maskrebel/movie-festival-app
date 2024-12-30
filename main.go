@@ -11,9 +11,12 @@ import (
 )
 
 func migrate(db *gorm.DB) {
-	db.AutoMigrate(&models.Movie{})
-	db.AutoMigrate(&models.User{})
-	db.AutoMigrate(&models.Vote{})
+	db.AutoMigrate(
+		&models.Movie{},
+		&models.User{},
+		&models.Vote{},
+		&models.View{},
+	)
 }
 
 func runServer(db *gorm.DB) {

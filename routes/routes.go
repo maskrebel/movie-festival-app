@@ -29,5 +29,6 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	{
 		movies.POST("/:id/vote", middlewares.AuthMiddleware(), controllers.VoteMovie(db))
 		movies.DELETE("/:id/unvote", middlewares.AuthMiddleware(), controllers.UnVoteMovie(db))
+		movies.POST("/:id/view", middlewares.AuthMiddleware(), controllers.ViewMovie(db))
 	}
 }
