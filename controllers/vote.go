@@ -34,6 +34,10 @@ func VoteMovie(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		// update movie.votes
+		movie.Votes += 1
+		db.Save(&movie)
+
 		c.JSON(http.StatusCreated, gin.H{"message": "Vote successfully!"})
 	}
 }
@@ -55,6 +59,10 @@ func UnVoteMovie(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "UnVote successfully!"})
+		// update movie.votes
+		movie.Votes -= 1
+		db.Save(&movie)
+
+		c.JSON(http.StatusOK, gin.H{"message": "vote removed successfully!"})
 	}
 }

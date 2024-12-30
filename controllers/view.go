@@ -43,7 +43,9 @@ func ViewMovie(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		db.Model(&movie).Update("views", gorm.Expr("views + ?", 1))
+		// update movie.views
+		movie.Views += 1
+		db.Save(&movie)
 
 		c.JSON(http.StatusOK, gin.H{"message": "View record successfully!"})
 	}

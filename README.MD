@@ -22,7 +22,13 @@ go install // install from go.mod
 ### Get popular movie
 ```shell
 curl -X GET "http://localhost:8080/admin/movies/most-viewed" \
-     -H "Accept: application/json"
+--header 'Authorization: Bearer $token'
+```
+
+### Get popular genre movie
+```shell
+curl --location 'http://localhost:8080/admin/movies/genre-most-viewed' \
+--header 'Authorization: Bearer $token'
 ```
 
 ### Create list movie
@@ -35,8 +41,29 @@ curl -X POST "http://localhost:8080/admin/movies" \
            "duration": 120,
            "artists": ["Artist1", "Artist2"],
            "genres": ["Action", "Adventure"],
-           "url": "https://example.com/movie.mp4"
+           "watch_url": "https://example.com/movie.mp4"
          }'
+```
+
+### Update Movie
+```shell
+curl --location --request PUT 'http://localhost:8080/admin/movies/1' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer $token' \
+--data '{
+    "title": "Dora Explorer",
+    "description": "Dora Explorer Description",
+    "duration": 120,
+    "artists": [
+        "Artist1",
+        "Artist2"
+    ],
+    "genres": [
+        "Action",
+        "Adventure"
+    ],
+    "watch_url": "https://example.com/dora.mp4"
+}'
 ```
 
 ### Create new user

@@ -14,4 +14,5 @@ type Movie struct {
 	Genres      string `gorm:"not null"`
 	WatchURL    string `gorm:"not null;unique"`
 	Views       int    `gorm:"default:0"`
+	Votes       int    `gorm:"default:0"`
 }

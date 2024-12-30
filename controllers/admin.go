@@ -41,7 +41,7 @@ func GetMostViewed(db *gorm.DB) gin.HandlerFunc {
 				"artists":     movie.Artists,
 				"genres":      movie.Genres,
 				"views":       movie.Views,
-				"votes":       movie.Views,
+				"votes":       movie.Votes,
 				"watch_url":   movie.WatchURL,
 				"created_at":  movie.CreatedAt,
 				"updated_at":  movie.UpdatedAt,
@@ -117,5 +117,50 @@ func CreateMovie(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		c.JSON(201, gin.H{"movie_id": movie.ID, "message": "Create movie successfully!"})
+	}
+}
+
+func UpdateMovie(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		movieID, errID := strconv.Atoi(c.Param("id"))
+		if errID != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid movie id"})
+			return
+		}
+
+		var movie models.Movie
+		if err := db.First(&movie, movieID).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Movie not found"})
+			return
+		}
+
+		var input struct {
+			Title       string   `json:"title" binding:"required"`
+			Description string   `json:"description" binding:"required"`
+			Duration    int      `json:"duration" binding:"required"`
+			Artists     []string `json:"artists" binding:"required"`
+			Genres      []string `json:"genres" binding:"required"`
+			WatchURL    string   `json:"watch_url" binding:"required,url"`
+		}
+
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// update movie
+		movie.Title = input.Title
+		movie.Description = input.Description
+		movie.Duration = input.Duration
+		movie.Artists = strings.Join(input.Artists, ", ")
+		movie.Genres = strings.Join(input.Genres, ", ")
+		movie.WatchURL = input.WatchURL
+
+		if err := db.Save(&movie).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update movie"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Movie updated successfully"})
 	}
 }

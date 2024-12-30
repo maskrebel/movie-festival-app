@@ -12,6 +12,7 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	admin := router.Group("/admin/movies")
 	{
 		admin.POST("/", middlewares.AuthMiddleware(db), controllers.CreateMovie(db))
+		admin.PUT("/:id", middlewares.AuthMiddleware(db), controllers.UpdateMovie(db))
 		admin.GET("/most-viewed", middlewares.AuthMiddleware(db), controllers.GetMostViewed(db))
 		admin.GET("/genre-most-viewed", middlewares.AuthMiddleware(db), controllers.GetGenreMostViewed(db))
 	}
