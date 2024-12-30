@@ -87,6 +87,12 @@ curl -X POST "http://localhost:8080/auth/login" \
          }'
 ```
 
+### User Logout
+```shell
+curl --location --request POST 'http://localhost:8080/auth/logout' \
+--header 'Authorization: Bearer $token'
+```
+
 ### Search movie by title/description/artists/genres
 ```shell
 curl --location 'http://localhost:8080/movies/search?q=dora

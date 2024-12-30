@@ -13,6 +13,7 @@ func AuthMiddleware(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userId uint
 		var username string
+		var tokenString string
 		authHeader := c.Request.Header.Get("Authorization")
 		if !(c.FullPath() == "/movies/:id/view" && authHeader == "") {
 			if !strings.HasPrefix(authHeader, "Bearer ") {
@@ -21,7 +22,16 @@ func AuthMiddleware(db *gorm.DB) gin.HandlerFunc {
 				return
 			}
 
-			tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+			tokenString = strings.TrimPrefix(authHeader, "Bearer ")
+
+			// validate logout
+			var tokenExpired models.TokenExpired
+			if err := db.Where(&models.TokenExpired{Token: tokenString}).First(&tokenExpired).Error; err == nil {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Your token is expired"})
+				c.Abort()
+				return
+			}
+
 			claims, err := utils.ParseJWT(tokenString)
 			if err != nil {
 				c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
@@ -43,6 +53,7 @@ func AuthMiddleware(db *gorm.DB) gin.HandlerFunc {
 		}
 		c.Set("user_id", userId)
 		c.Set("username", username)
+		c.Set("token", tokenString)
 		c.Next()
 	}
 }

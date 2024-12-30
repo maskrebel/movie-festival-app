@@ -16,6 +16,7 @@ func migrate(db *gorm.DB) {
 		&models.User{},
 		&models.Vote{},
 		&models.View{},
+		&models.TokenExpired{},
 	)
 }
 

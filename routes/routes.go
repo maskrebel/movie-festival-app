@@ -23,7 +23,7 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 		auth.GET("/status", middlewares.AuthMiddleware(db), controllers.Status(db))
 		auth.POST("/register", controllers.Register(db))
 		auth.POST("/login", controllers.Login(db))
-		auth.POST("/logout", controllers.Logout(db))
+		auth.POST("/logout", middlewares.AuthMiddleware(db), controllers.Logout(db))
 	}
 
 	// movies route

@@ -80,6 +80,14 @@ func Status(db *gorm.DB) gin.HandlerFunc {
 
 func Logout(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		token, _ := c.Get("token")
+		tokenExpired := models.TokenExpired{
+			Token: token.(string),
+		}
+		if err := db.Create(&tokenExpired).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+
 		c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
 	}
 }
