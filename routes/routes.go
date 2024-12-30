@@ -11,8 +11,9 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	// admin routes
 	admin := router.Group("/admin/movies")
 	{
-		admin.GET("/most-viewed", controllers.GetMostViewed(db))
 		admin.POST("/", controllers.CreateMovie(db))
+		admin.GET("/most-viewed", controllers.GetMostViewed(db))
+		admin.GET("/genre-most-viewed", controllers.GetGenreMostViewed(db))
 	}
 
 	// auth routes

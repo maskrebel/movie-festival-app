@@ -30,16 +30,57 @@ func GetMostViewed(db *gorm.DB) gin.HandlerFunc {
 		db.Order("views desc").Offset(offset).Limit(perPage).Find(&movies)
 
 		totalPages := int(math.Ceil(float64(total) / float64(perPage)))
+		data := make([]map[string]interface{}, 0)
+		for _, movie := range movies {
+			obj := map[string]interface{}{
+				"id":          movie.ID,
+				"title":       movie.Title,
+				"year":        movie.Year,
+				"description": movie.Description,
+				"duration":    movie.Duration,
+				"artists":     movie.Artists,
+				"genres":      movie.Genres,
+				"views":       movie.Views,
+				"votes":       movie.Views,
+				"watch_url":   movie.WatchURL,
+				"created_at":  movie.CreatedAt,
+				"updated_at":  movie.UpdatedAt,
+			}
+
+			data = append(data, obj)
+		}
 
 		res := gin.H{
 			"page":        page,
 			"per_page":    perPage,
 			"total":       total,
 			"total_pages": totalPages,
-			"data":        movies,
+			"data":        data,
 		}
 
 		c.JSON(http.StatusOK, res)
+	}
+}
+
+func GetGenreMostViewed(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var movies []models.Movie
+		mapGenresTotal := make(map[string]int32)
+
+		db.Find(&movies)
+
+		for _, movie := range movies {
+			genres := strings.Split(movie.Genres, ", ")
+			for _, v := range genres {
+				if _, ok := mapGenresTotal[v]; ok {
+					mapGenresTotal[v] += int32(movie.Views)
+					continue
+				}
+				mapGenresTotal[v] = int32(movie.Views)
+			}
+		}
+
+		c.JSON(http.StatusOK, gin.H{"data": mapGenresTotal})
 	}
 }
 
