@@ -1,0 +1,83 @@
+### Create New User
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "email": "user1@example.com",
+  "password": "securepassword"
+}
+
+### User Login
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "securepassword"
+}
+
+> {% client.global.set("auth_token", response.body.token); %}
+
+### User Status
+GET http://localhost:8080/auth/status
+Authorization: Bearer {{auth_token}}
+
+### Admin Get Most Popular
+GET http://localhost:8080/admin/movies/most-viewed
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+
+### Admin Creat New List Movie
+POST http://localhost:8080/admin/movies
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "title": "Movie Title 10",
+  "description": "Movie Description 10",
+  "year": 2010,
+  "duration": 120,
+  "artists": ["Artist1", "Artist2"],
+  "genres": ["Action", "Adventure"],
+  "watch_url": "https://example.com/movie-baru10.mp4"
+}
+
+### Admin Update Movie
+PUT http://localhost:8080/admin/movies/:id
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "title": "Movie Title 10",
+  "description": "Movie Description 10",
+  "year": 2010,
+  "duration": 120,
+  "artists": ["Artist1", "Artist2"],
+  "genres": ["Action", "Adventure"],
+  "watch_url": "https://example.com/movie-baru10.mp4"
+}
+
+### User vote Movie
+POST http://localhost:8080/movies/:movieID/vote
+Authorization: Bearer {{auth_token}}
+
+### User UnVote Movie
+DELETE http://localhost:8080/movies/:movieID/unvote
+Authorization: Bearer {{auth_token}}
+
+### User view record
+POST http://localhost:8080/movies/:movieID/view
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+    "duration": 120
+}
+
+### User search movies by title/description/artists/genres
+GET http://localhost:8080/movies/search?q=dora
+
+### User Logout
+POST http://localhost:8080/auth/logout
+Authorization: Bearer {{auth_token}}

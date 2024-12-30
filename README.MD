@@ -10,7 +10,8 @@ This project is a backend system for managing a **Movie Festival** application. 
 3. [Database Design](#database-design)
 4. [Setup Environment](#setup-environment)
 5. [Running Tests](#running-tests)
-6. [Contributing](#contributing)
+6. [API Documentation](./http)
+7. [Contributing](#contributing)
 
 ## Features  
 
