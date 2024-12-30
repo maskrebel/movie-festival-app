@@ -87,6 +87,11 @@ curl -X POST "http://localhost:8080/auth/login" \
          }'
 ```
 
+### Search movie by title/description/artists/genres
+```shell
+curl --location 'http://localhost:8080/movies/search?q=dora
+```
+
 ### User vote Movie
 ```shell
 curl --location --request POST 'http://localhost:8080/movies/:movieId/vote' \
