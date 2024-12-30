@@ -59,3 +59,25 @@ curl -X POST "http://localhost:8080/auth/login" \
            "password": "securepassword"
          }'
 ```
+
+### User vote Movie
+```shell
+curl --location --request POST 'http://localhost:8080/movies/:movieId/vote' \
+--header 'Authorization: Bearer $token'
+```
+
+### User UnVote Movie
+```shell
+curl --location --request DELETE 'http://localhost:8080/movies/:movieId/unvote' \
+--header 'Authorization: Bearer $token'
+```
+
+### User view record
+```shell
+curl --location 'http://localhost:8080/movies/1/view' \
+--header 'Authorization: Bearer $token' \
+--header 'Content-Type: application/json' \
+--data '{
+    "duration": 120
+}'
+```
