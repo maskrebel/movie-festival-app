@@ -3,31 +3,35 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-	"movie-festival-app/config"
-	"movie-festival-app/controllers"
-	"movie-festival-app/middlewares"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-func setupTestRouter(db *gorm.DB) *gin.Engine {
-	router := gin.Default()
-	router.POST("/auth/login", controllers.Login(db))
-	router.GET("/auth/status", middlewares.AuthMiddleware(db), controllers.Status(db))
-	return router
-}
-
 func TestRegister(t *testing.T) {
-	db := config.SetupDatabase()
-	router := setupTestRouter(db)
+	router := SetupRouterTest()
+
+	t.Run("Successful Register", func(t *testing.T) {
+		requestBody := map[string]string{
+			"username": "test_acc",
+			"email":    "acc@test.com",
+			"password": "securepassword",
+		}
+
+		body, _ := json.Marshal(requestBody)
+		req, _ := http.NewRequest("POST", "/auth/register", bytes.NewBuffer(body))
+		req.Header.Add("Content-Type", "application/json")
+		rr := httptest.NewRecorder()
+		router.ServeHTTP(rr, req)
+		if status := rr.Code; status != http.StatusCreated {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusCreated)
+		}
+	})
 
 	// Test case: Successful registration
 	t.Run("Successful Login", func(t *testing.T) {
 		requestBody := map[string]string{
-			"email":    "user1@example.com",
+			"email":    "acc@test.com",
 			"password": "securepassword",
 		}
 		body, _ := json.Marshal(requestBody)

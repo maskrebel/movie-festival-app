@@ -7,31 +7,33 @@ import (
 	"movie-festival-app/middlewares"
 )
 
-func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
+func RegisterRoutes(router *gin.Engine, db *gorm.DB, mc controllers.MovieController, m middlewares.Middleware) {
 	// admin routes
 	admin := router.Group("/admin/movies")
 	{
-		admin.POST("/", middlewares.AuthMiddleware(db), controllers.CreateMovie(db))
-		admin.PUT("/:id", middlewares.AuthMiddleware(db), controllers.UpdateMovie(db))
-		admin.GET("/most-viewed", middlewares.AuthMiddleware(db), controllers.GetMostViewed(db))
-		admin.GET("/genre-most-viewed", middlewares.AuthMiddleware(db), controllers.GetGenreMostViewed(db))
+		admin.POST("/", m.Auth(), controllers.CreateMovie(db))
+		admin.PUT("/:id", m.Auth(), controllers.UpdateMovie(db))
+		admin.GET("/most-viewed", m.Auth(), mc.GetMostViewer())
+		admin.GET("/genre-most-viewed", m.Auth(), mc.GetGenreMostViewed())
+
+		admin.GET("/v1/genre-most-viewed", m.Auth(), mc.GetGenreMostViewed())
 	}
 
 	// auth routes
 	auth := router.Group("/auth")
 	{
-		auth.GET("/status", middlewares.AuthMiddleware(db), controllers.Status(db))
+		auth.GET("/status", m.Auth(), controllers.Status(db))
 		auth.POST("/register", controllers.Register(db))
 		auth.POST("/login", controllers.Login(db))
-		auth.POST("/logout", middlewares.AuthMiddleware(db), controllers.Logout(db))
+		auth.POST("/logout", m.Auth(), controllers.Logout(db))
 	}
 
 	// movies route
 	movies := router.Group("/movies")
 	{
 		movies.GET("/search", controllers.SearchMovies(db))
-		movies.POST("/:id/vote", middlewares.AuthMiddleware(db), controllers.VoteMovie(db))
-		movies.DELETE("/:id/unvote", middlewares.AuthMiddleware(db), controllers.UnVoteMovie(db))
-		movies.POST("/:id/view", middlewares.AuthMiddleware(db), controllers.ViewMovie(db))
+		movies.POST("/:id/vote", m.Auth(), controllers.VoteMovie(db))
+		movies.DELETE("/:id/unvote", m.Auth(), controllers.UnVoteMovie(db))
+		movies.POST("/:id/view", m.Auth(), controllers.ViewMovie(db))
 	}
 }

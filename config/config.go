@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -18,14 +17,7 @@ func BaseUrl() string {
 }
 
 func SetupDatabase() *gorm.DB {
-	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		getEnv("DB_HOST", "localhost"),
-		getEnv("DB_USER", "movie"),
-		getEnv("DB_PASSWORD", "movie"),
-		getEnv("DB_NAME", "movie"),
-		getEnv("DB_PORT", "5454"),
-	)
+	dsn := getEnv("DB_URI", "host=localhost user=movie password=movie dbname=movie port=5454 sslmode=disable")
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {

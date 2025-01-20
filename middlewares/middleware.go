@@ -9,7 +9,17 @@ import (
 	"strings"
 )
 
-func AuthMiddleware(db *gorm.DB) gin.HandlerFunc {
+type Middleware struct {
+	db *gorm.DB
+}
+
+func NewMiddleware(db *gorm.DB) *Middleware {
+	return &Middleware{
+		db: db,
+	}
+}
+
+func (am *Middleware) Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var userId uint
 		var username string
@@ -26,7 +36,7 @@ func AuthMiddleware(db *gorm.DB) gin.HandlerFunc {
 
 			// validate logout
 			var tokenExpired models.TokenExpired
-			if err := db.Where(&models.TokenExpired{Token: tokenString}).First(&tokenExpired).Error; err == nil {
+			if err := am.db.Where(&models.TokenExpired{Token: tokenString}).First(&tokenExpired).Error; err == nil {
 				c.JSON(http.StatusUnauthorized, gin.H{"error": "Your token is expired"})
 				c.Abort()
 				return
@@ -42,7 +52,7 @@ func AuthMiddleware(db *gorm.DB) gin.HandlerFunc {
 
 			// get from database
 			var user models.User
-			db.First(&user, userId)
+			am.db.First(&user, userId)
 
 			username = user.Username
 			if strings.Split(c.FullPath(), "/")[1] == "admin" && !user.IsAdmin {

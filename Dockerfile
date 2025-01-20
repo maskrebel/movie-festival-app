@@ -1,11 +1,9 @@
 FROM golang:1.23
 
-RUN mkdir /code
 
-WORKDIR /code
+WORKDIR /go/src
 
-COPY . /code/
+COPY . /go/src
 
-RUN go install
 RUN go mod tidy
-RUN go run main.go migrate
+RUN go build main.go

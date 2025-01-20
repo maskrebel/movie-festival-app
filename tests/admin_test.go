@@ -3,27 +3,13 @@ package tests
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-	"movie-festival-app/config"
-	"movie-festival-app/controllers"
-	"movie-festival-app/middlewares"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-func SetupAdminRouter(db *gorm.DB) *gin.Engine {
-	router := gin.Default()
-	router.POST("/auth/login", controllers.Login(db))
-	router.GET("/admin/most-viewed", middlewares.AuthMiddleware(db), controllers.GetMostViewed(db))
-	router.GET("/admin/genre-most-viewed", middlewares.AuthMiddleware(db), controllers.GetGenreMostViewed(db))
-	return router
-}
-
 func TestAdmin(t *testing.T) {
-	db := config.SetupDatabase()
-	router := SetupAdminRouter(db)
+	router := SetupRouterTest()
 
 	t.Run("Test Admin", func(t *testing.T) {
 		requestBody := map[string]string{
